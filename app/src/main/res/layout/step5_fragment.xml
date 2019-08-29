@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/toolbar_color">
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/button_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button_white_bg"
+            android:foreground="@drawable/ripple_effect_rounded"
+            android:padding="10dp"
+            app:srcCompat="@drawable/back_white_icon"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 5: Approval Details"
+            android:textColor="@color/white"
+            android:textSize="9pt"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/layout_button_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        android:columnCount="1"
+        android:background="@color/darker_grey">
+
+        <Button
+            android:id="@+id/button_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:background="@android:color/transparent"
+            android:foreground="@drawable/ripple_effect"
+            android:text="Done"
+            android:textColor="#FFFFFF" />
+
+    </GridLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toTopOf="@+id/layout_button_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.842"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1. Reported by"
+                            android:textSize="9pt"
+                            android:layout_marginRight="10dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/show_or_hide_reportedby"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:text="Less"
+                            android:textSize="8pt"
+                            android:textColor="@color/blue"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:textAlignment="textEnd"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/blue"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Name"/>
+
+                    <TextView
+                        android:id="@+id/text_reporter_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="8pt"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Staff ID"/>
+
+                    <TextView
+                        android:id="@+id/text_reporter_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Staff ID"
+                        android:textSize="8pt"
+                        android:textStyle="bold"/>
+
+                    <LinearLayout
+                        android:id="@+id/reportedby_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Contact Number"/>
+
+                        <TextView
+                            android:id="@+id/text_reporter_contact_no"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contact Number"
+                            android:textSize="8pt"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Email"/>
+
+                        <TextView
+                            android:id="@+id/text_reporter_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textSize="8pt"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2. Approved by"
+                            android:textSize="9pt"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:text="*"
+                            android:textSize="9pt"
+                            android:textColor="@color/red" />
+
+                        <TextView
+                            android:id="@+id/show_or_hide_approved"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:clickable="true"
+                            android:text="Less"
+                            android:textSize="8pt"
+                            android:textColor="@color/blue"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:textAlignment="textEnd"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/blue"/>
+
+                    <LinearLayout
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/approvedby_layout1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Find Chief Invigilator"/>
+
+                        <EditText
+                            android:id="@+id/input_search_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:hint="Chief Invigilator ID"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:inputType="text"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null" />
+
+                        <Button
+                            android:id="@+id/button_search"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_button"
+                            android:foreground="@drawable/ripple_effect"
+                            android:text="Search"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="16dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/approvedby_layout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Name"/>
+
+                        <TextView
+                            android:id="@+id/text_approver_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Name"
+                            android:textSize="8pt"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Staff ID"/>
+
+                        <TextView
+                            android:id="@+id/text_approver_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Staff ID"
+                            android:textSize="8pt"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/approvedby_layout3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Contact Number"/>
+
+                        <TextView
+                            android:id="@+id/text_approver_contact_no"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contact Number"
+                            android:textSize="8pt"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Email"/>
+
+                        <TextView
+                            android:id="@+id/text_approver_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textSize="8pt"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3. Witness 1"
+                            android:textSize="9pt"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:text="*"
+                            android:textColor="@color/red"
+                            android:textSize="9pt"/>
+
+                        <TextView
+                            android:id="@+id/show_or_hide_witness_1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:clickable="true"
+                            android:text="Less"
+                            android:textSize="8pt"
+                            android:textColor="@color/blue"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:textAlignment="textEnd"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/blue"/>
+
+                    <LinearLayout
+                        android:id="@+id/witness_1_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Name"/>
+
+                        <EditText
+                            android:id="@+id/input_witness_1_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:hint="Name"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Contact Number"/>
+
+                        <EditText
+                            android:id="@+id/input_witness_1_contact_no"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:inputType="number"
+                            android:hint="Contact Number"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Email"/>
+
+                        <EditText
+                            android:id="@+id/input_witness_1_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:hint="Email"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null"
+                            android:inputType="text"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4. Witness 2"
+                            android:textSize="9pt"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:text="*"
+                            android:textColor="@color/red"
+                            android:textSize="9pt"/>
+
+                        <TextView
+                            android:id="@+id/show_or_hide_witness_2"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:clickable="true"
+                            android:text="Less"
+                            android:textSize="8pt"
+                            android:textColor="@color/blue"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:textAlignment="textEnd"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/blue"/>
+
+                    <LinearLayout
+                        android:id="@+id/witness_2_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Name"/>
+
+                        <EditText
+                            android:id="@+id/input_witness_2_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:hint="Name"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Contact Number"/>
+
+                        <EditText
+                            android:id="@+id/input_witness_2_contact_no"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:inputType="number"
+                            android:hint="Contact Number"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Email"/>
+
+                        <EditText
+                            android:id="@+id/input_witness_2_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/blue_input_field"
+                            android:focusable="true"
+                            android:hint="Email"
+                            android:maxLines="1"
+                            android:padding="10dp"
+                            android:textColorHighlight="@android:color/darker_gray"
+                            android:textCursorDrawable="@null"
+                            android:inputType="text"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
