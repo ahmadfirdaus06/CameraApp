@@ -29,14 +29,16 @@ import java.util.Map;
 public class LogAccessRequestAsync extends AsyncTask<JSONObject, Void, Boolean> {
 
     private AsyncResponse response;
-    private DataSource dataSource = new DataSource();
-    private Cache cache = new Cache();
+    private DataSource dataSource;
     private Context context;
+    private Cache cache;
     static final String COOKIES_HEADER = "Set-Cookie";
     static java.net.CookieManager cookieManager;
 
     public LogAccessRequestAsync(Context context) {
         this.context = context;
+        dataSource = new DataSource();
+        cache = new Cache(this.context);
     }
 
     public interface AsyncResponse {
@@ -87,7 +89,7 @@ public class LogAccessRequestAsync extends AsyncTask<JSONObject, Void, Boolean> 
             }
             if (requestType == LOGOUT){
                 JSONObject objectRequest = new JSONObject();
-                objectRequest.put("user_id", cache.getUserPrefCache(context).getUserID());
+                objectRequest.put("user_id", cache.getUserPrefCache().getUserID());
                 os.writeBytes(objectRequest.toString());
             }
             os.flush();
@@ -122,7 +124,7 @@ public class LogAccessRequestAsync extends AsyncTask<JSONObject, Void, Boolean> 
                                 user.setCreatedDate(data.getString("created_date"));
                                 user.setModifiedDate(data.getString("modified_date"));
                                 user.setLastLogin(data.getString("last_login"));
-                                if (cache.setUserPrefCache(context, user)){
+                                if (cache.setUserPrefCache(user)){
                                     granted = true;
                                 }
                             }
@@ -135,7 +137,7 @@ public class LogAccessRequestAsync extends AsyncTask<JSONObject, Void, Boolean> 
                     else if (requestType == LOGOUT){
                         System.out.println(response.getString("message"));
                         if (response.getString("message").contains("Success")){
-                            if (cache.removeUserPrefCache(context)){
+                            if (cache.removeUserPrefCache()){
                                 granted = true;
                             }
                         }

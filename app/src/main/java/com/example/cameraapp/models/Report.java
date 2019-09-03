@@ -3,6 +3,7 @@ package com.example.cameraapp.models;
 import java.util.ArrayList;
 
 public class Report {
+    private String report_id = "";
     private String studentId = "";
     private String courseCode = "";
     private String courseName = "";
@@ -21,8 +22,22 @@ public class Report {
     private String witness2Name = "";
     private String witness2ContactNo = "";
     private String witness2Email = "";
+    private String reportStatus = "";
+    private String caseStatus = "";
+    private String uploadedBy = "";
+    private String lastApprovalDate = "";
+    private String isValid = "";
 
     public Report() {
+    }
+
+
+    public String getReport_id() {
+        return report_id;
+    }
+
+    public void setReport_id(String report_id) {
+        this.report_id = report_id;
     }
 
     public String getStudentId() {
@@ -167,5 +182,45 @@ public class Report {
 
     public void setWitness2Email(String witness2Email) {
         this.witness2Email = witness2Email;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(String reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+
+    public String getUploadedBy() {
+        return uploadedBy;
+    }
+
+    public void setUploadedBy(String uploadedBy) {
+        this.uploadedBy = uploadedBy;
+    }
+
+    public String getLastApprovalDate() {
+        return lastApprovalDate;
+    }
+
+    public void setLastApprovalDate(String lastApprovalDate) {
+        this.lastApprovalDate = lastApprovalDate;
+    }
+
+    public String getIsValid() {
+        return isValid;
+    }
+
+    public void setIsValid(String isValid) {
+        this.isValid = isValid;
     }
 }

@@ -24,7 +24,7 @@ public class Step2Fragment extends Fragment {
     EditText inputCourseCode, inputCourseName, inputExamVenue, inputExamDate, inputExamTime;
     GridLayout layoutButtonNext;
 
-    Cache cache = new Cache();
+    Cache cache;
     Exam exam = null;
 
     @Override
@@ -35,6 +35,7 @@ public class Step2Fragment extends Fragment {
     }
 
     public void onViewCreated (View view, Bundle savedInstanceState){
+        cache = new Cache(getActivity());
         buttonBack = view.findViewById(R.id.button_back);
         buttonNext = view.findViewById(R.id.button_next);
         inputCourseCode = view.findViewById(R.id.input_course_code);
@@ -60,7 +61,7 @@ public class Step2Fragment extends Fragment {
             exam.setExamVenue(examVenue);
             exam.setExamDate(examDate);
             exam.setExamTime(examTime);
-            if (cache.setExamInfoCache(getActivity(), exam)){
+            if (cache.setExamInfoCache(exam)){
                 Step3Fragment step3Fragment = new Step3Fragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
@@ -194,8 +195,8 @@ public class Step2Fragment extends Fragment {
     }
 
     public void getSaved(){
-        if(cache.getExamInfoCache(getActivity()) != null){
-            exam = cache.getExamInfoCache(getActivity());
+        if(cache.getExamInfoCache() != null){
+            exam = cache.getExamInfoCache();
             inputCourseCode.setText(exam.getCourseCode());
             inputCourseName.setText(exam.getCourseName());
             inputExamVenue.setText(exam.getExamVenue());

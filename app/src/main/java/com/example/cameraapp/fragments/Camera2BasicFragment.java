@@ -86,7 +86,7 @@ public class Camera2BasicFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
-    Cache cache = new Cache();
+    Cache cache = new Cache(getActivity());
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -847,21 +847,21 @@ public class Camera2BasicFragment extends Fragment
                                                @NonNull TotalCaptureResult result) {
 //                    showToast("Saved: " + mFile);
 
-                    if (cache.getEvidenceDetailsCache(getActivity()) != null){
-                        Evidence evidence = cache.getEvidenceDetailsCache(getActivity());
+                    if (cache.getEvidenceDetailsCache() != null){
+                        Evidence evidence = cache.getEvidenceDetailsCache();
                         evidence.getImagePaths().add(mFile.getAbsolutePath());
-                        cache.setEvidenceDetailsCache(getActivity(), evidence);
+                        cache.setEvidenceDetailsCache(evidence);
                     }
                     else{
                         Evidence evidence = new Evidence();
                         ArrayList<String> imagePaths = new ArrayList<>();
                         imagePaths.add(mFile.getAbsolutePath());
                         evidence.setImagePaths(imagePaths);
-                        cache.setEvidenceDetailsCache(getActivity(), evidence);
+                        cache.setEvidenceDetailsCache(evidence);
                     }
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
-                    if (cache.getEvidenceDetailsCache(getActivity()) != null){
+                    if (cache.getEvidenceDetailsCache() != null){
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 }

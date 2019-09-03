@@ -49,9 +49,9 @@ public class Step1Fragment extends Fragment {
     ProgressDialog progressDialog;
     GridLayout layoutButtonNext;
 
-    ConnectionCheck conn = new ConnectionCheck();
-    DataSource dataSource = new DataSource();
-    Cache cache = new Cache();
+    ConnectionCheck conn;
+    DataSource dataSource;
+    Cache cache;
     Student student = null;
 
     @Override
@@ -63,6 +63,11 @@ public class Step1Fragment extends Fragment {
 
     public void onViewCreated (View view, Bundle savedInstanceState){
 
+        dataSource = new DataSource();
+        cache = new Cache(getActivity());
+        conn = new ConnectionCheck(getActivity());
+        dataSource = new DataSource();
+        cache = new Cache(getActivity());
         inputSearchId = view.findViewById(R.id.input_search_id);
         scrollView = view.findViewById(R.id.scrollView);
         layoutDetails = view.findViewById(R.id.layout_details);
@@ -99,7 +104,7 @@ public class Step1Fragment extends Fragment {
             progressDialog.setMessage("Searching...");
             progressDialog.setCancelable(false);
             String id = inputSearchId.getText().toString().trim();
-            if (conn.isOnline(getActivity())){
+            if (conn.isOnline()){
                 if (!id.isEmpty()){
                     progressDialog.show();
                     HashMap<String, String> params = new HashMap();
@@ -181,7 +186,7 @@ public class Step1Fragment extends Fragment {
     private View.OnClickListener validNext = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (cache.setStudentInfoCache(getActivity(), student)){
+            if (cache.setStudentInfoCache(student)){
                 Step2Fragment step2Fragment = new Step2Fragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
@@ -220,7 +225,7 @@ public class Step1Fragment extends Fragment {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (cache.removeAllReportCache(getActivity())){
+                        if (cache.removeAllReportCache()){
                             MainFragment mainFragment = new MainFragment();
                             FragmentManager fm = getActivity().getSupportFragmentManager();
                             FragmentTransaction ft = fm.beginTransaction();
@@ -241,8 +246,8 @@ public class Step1Fragment extends Fragment {
     }
 
     public void getSaved(){
-        if (cache.getStudentInfoCache(getActivity()) != null){
-            student = cache.getStudentInfoCache(getActivity());
+        if (cache.getStudentInfoCache() != null){
+            student = cache.getStudentInfoCache();
             textMatricId.setText(student.getMatricId());
             textName.setText(student.getName());
             textIcOrPassport.setText(student.getIcOrPassport());

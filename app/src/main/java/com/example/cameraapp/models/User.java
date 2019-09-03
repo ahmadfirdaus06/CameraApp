@@ -11,6 +11,7 @@ public class User {
     private String createdDate = "";
     private String modifiedDate = "";
     private String lastLogin = "";
+    private String grantedAccess = "";
 
     public User() {
     }
@@ -93,5 +94,13 @@ public class User {
 
     public void setLastLogin(String lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public String getGrantedAccess() {
+        return grantedAccess;
+    }
+
+    public void setGrantedAccess(String grantedAccess) {
+        this.grantedAccess = grantedAccess;
     }
 }

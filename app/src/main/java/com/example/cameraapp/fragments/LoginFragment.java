@@ -23,8 +23,8 @@ import org.json.JSONObject;
 
 public class LoginFragment extends Fragment implements LogAccessRequestAsync.AsyncResponse {
 
-    private ConnectionCheck conn = new ConnectionCheck();
-    private Cache cache = new Cache();
+    private ConnectionCheck conn;
+    private Cache cache;
     private Window window;
     private EditText inputPassword, inputId;
     private ProgressBar progressBar;
@@ -39,6 +39,8 @@ public class LoginFragment extends Fragment implements LogAccessRequestAsync.Asy
     }
 
     public void onViewCreated (View view, Bundle savedInstanceState){
+        conn = new ConnectionCheck(getActivity());
+        cache = new Cache(getActivity());
         inputId = view.findViewById(R.id.input_id);
         inputPassword = view.findViewById(R.id.input_password);
         progressBar = view.findViewById(R.id.progressBar);
@@ -49,7 +51,7 @@ public class LoginFragment extends Fragment implements LogAccessRequestAsync.Asy
     private View.OnClickListener login = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (conn.isOnline(getActivity())){
+            if (conn.isOnline()){
                 String id = inputId.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
                 if (!id.isEmpty() && !password.isEmpty()){
@@ -90,7 +92,7 @@ public class LoginFragment extends Fragment implements LogAccessRequestAsync.Asy
 
     public void redirect(){
 
-        if (cache.getUserPrefCache(getActivity()) != null){
+        if (cache.getUserPrefCache() != null){
             MainFragment mainFragment = new MainFragment();
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, mainFragment).commit();
         }

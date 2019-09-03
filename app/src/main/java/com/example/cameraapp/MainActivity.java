@@ -38,27 +38,30 @@ import com.android.volley.toolbox.Volley;
 import com.example.cameraapp.config.Cache;
 import com.example.cameraapp.config.ConnectionCheck;
 import com.example.cameraapp.config.DataSource;
+import com.example.cameraapp.config.SQLiteHelper;
 import com.example.cameraapp.fragments.LoginFragment;
 import com.example.cameraapp.fragments.MainFragment;
 import com.example.cameraapp.fragments.ReportStatusFragment;
 import com.example.cameraapp.fragments.Step1Fragment;
 import com.example.cameraapp.miscellanous.CustomUploadingBar;
 import com.example.cameraapp.miscellanous.UploadService;
+import com.example.cameraapp.models.Student;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Cache cache = new Cache();
+    private Cache cache;
     private CustomUploadingBar uploadingBar;
     private Window window;
     private Dialog dialog;
     private TextView textYes, textNo, textReview, textReportId;
-    private ConnectionCheck conn = new ConnectionCheck();
+    private ConnectionCheck conn;
     private AlertDialog alertDialog;
     private ProgressDialog progressDialog;
     private StringRequest stringRequest;
     private RequestQueue requestQueue;
     private DataSource dataSource = new DataSource();
     private String reportId;
+    private SQLiteHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +72,24 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        cache = new Cache(this);
+        conn = new ConnectionCheck(this);
         uploadingBar = new CustomUploadingBar(this);
         window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.toolbar_color));
         redirectToLogin();
+        db = new SQLiteHelper(this);
+        Student student = new Student();
+        student.setStudentId("123");
+        student.setMatricId("123");
+        student.setIcOrPassport("134");
+        student.setName("abc");
+        student.setProgramme("abc");
+        student.setContactNo("0123");
+        student.setEmail("abc@gmail.com");
+        db.addStudent(student);
 
     }
 
@@ -192,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener reupload = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (conn.isOnline(getApplicationContext())){
+            if (conn.isOnline()){
                 dialog.dismiss();
-                if (conn.isMobileData(getApplicationContext())){
+                if (conn.isMobileData()){
                     alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.alertDialog)).create();
                     alertDialog.setTitle("Confirm");
                     alertDialog.setMessage("Are you sure to upload using mobile data?\n(Data charges may apply.)");
@@ -256,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            if (cache.removeAllReportCache(getApplicationContext())){
+                            if (cache.removeAllReportCache()){
                                 MainFragment mainFragment = new MainFragment();
                                 getSupportFragmentManager().beginTransaction()
                                         .setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
@@ -273,26 +288,6 @@ public class MainActivity extends AppCompatActivity {
                     });
             alertDialog.show();
         }
-//        else if (fragment instanceof Step2Fragment){
-//            Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("step2Fragment");
-//            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right).remove(currentFragment).commit();
-//            getSupportFragmentManager().popBackStack();
-//        }
-//        else if (fragment instanceof Step3Fragment){
-//            Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("step3Fragment");
-//            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right).remove(currentFragment).commit();
-//            getSupportFragmentManager().popBackStack();
-//        }
-//        else if (fragment instanceof Step4Fragment){
-//            Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("step4Fragment");
-//            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right).remove(currentFragment).commit();
-//            getSupportFragmentManager().popBackStack();
-//        }
-//        else if (fragment instanceof Step5Fragment){
-//            Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("step5Fragment");
-//            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right).remove(currentFragment).commit();
-//            getSupportFragmentManager().popBackStack();
-//        }
         else{
             super.onBackPressed();
         }
@@ -323,6 +318,11 @@ public class MainActivity extends AppCompatActivity {
         if (uploadingBar != null){
             if (uploadingBar.isShowing()){
                 uploadingBar.dismiss();
+            }
+        }
+        if (dialog != null){
+            if (dialog.isShowing()){
+                dialog.dismiss();
             }
         }
 

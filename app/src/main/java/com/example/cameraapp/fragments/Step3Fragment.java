@@ -38,7 +38,7 @@ import static android.support.constraint.Constraints.TAG;
 
 public class Step3Fragment extends Fragment {
 
-    Cache cache = new Cache();
+    Cache cache;
     ImageSliderAdapter adapter;
     ViewPager imageSlider;
     TextView imageCounter, textEnlarge;
@@ -56,6 +56,7 @@ public class Step3Fragment extends Fragment {
 
     @SuppressLint("RestrictedApi")
     public void onViewCreated (View view, Bundle savedInstanceState){
+        cache = new Cache(getActivity());
         buttonNext = view.findViewById(R.id.button_next);
         buttonBack = view.findViewById(R.id.button_back);
         fabDeletePic = view.findViewById(R.id.fab_delete_picture);
@@ -73,8 +74,8 @@ public class Step3Fragment extends Fragment {
         buttonBack.setOnClickListener(back);
         fabAddPic.setOnClickListener(addPic);
         fabDeletePic.setOnClickListener(deletePic);
-        if (cache.getEvidenceDetailsCache(getActivity()) != null){
-            ArrayList<String> imagePaths = cache.getEvidenceDetailsCache(getActivity()).getImagePaths();
+        if (cache.getEvidenceDetailsCache() != null){
+            ArrayList<String> imagePaths = cache.getEvidenceDetailsCache().getImagePaths();
             adapter = new ImageSliderAdapter(getActivity(), imagePaths);
             imageSlider.setAdapter(adapter);
             adapter.notifyDataSetChanged();
@@ -184,11 +185,11 @@ public class Step3Fragment extends Fragment {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            ArrayList<String> imagePaths = cache.getEvidenceDetailsCache(getActivity()).getImagePaths();
+                            ArrayList<String> imagePaths = cache.getEvidenceDetailsCache().getImagePaths();
                             imagePaths.remove(imagePaths.get(imageSlider.getCurrentItem()));
                             Evidence evidence = new Evidence();
                             evidence.setImagePaths(imagePaths);
-                            cache.setEvidenceDetailsCache(getActivity(), evidence);
+                            cache.setEvidenceDetailsCache(evidence);
                             adapter.notifyDataSetChanged();
                             refreshUI();
                         }
@@ -243,16 +244,16 @@ public class Step3Fragment extends Fragment {
             if (requestCode == 1000) {
                 Uri imagePathUri = data.getData();
                 String imagePath = getRealPathFromURI(getActivity(), imagePathUri);
-                if (cache.getEvidenceDetailsCache(getActivity()) != null) {
-                    Evidence evidence = cache.getEvidenceDetailsCache(getActivity());
+                if (cache.getEvidenceDetailsCache() != null) {
+                    Evidence evidence = cache.getEvidenceDetailsCache();
                     evidence.getImagePaths().add(imagePath);
-                    cache.setEvidenceDetailsCache(getActivity(), evidence);
+                    cache.setEvidenceDetailsCache(evidence);
                 } else {
                     Evidence evidence = new Evidence();
                     ArrayList<String> imagePaths = new ArrayList<>();
                     imagePaths.add(imagePath);
                     evidence.setImagePaths(imagePaths);
-                    cache.setEvidenceDetailsCache(getActivity(), evidence);
+                    cache.setEvidenceDetailsCache(evidence);
                 }
             }
             if (adapter != null){

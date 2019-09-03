@@ -31,8 +31,8 @@ import java.util.List;
 
 public class MainFragment extends Fragment implements LogAccessRequestAsync.AsyncResponse{
 
-    private ConnectionCheck conn = new ConnectionCheck();
-    private Cache cache = new Cache();
+    private ConnectionCheck conn;
+    private Cache cache;
     private Window window;
     private Toolbar toolbar;
     private ListView listReport;
@@ -52,7 +52,8 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
     }
 
     public void onViewCreated (View view, Bundle savedInstanceState){
-
+        conn = new ConnectionCheck(getActivity());
+        cache = new Cache(getActivity());
         toolbar = view.findViewById(R.id.toolbar);
         listReport = view.findViewById(R.id.list_report);
         swipeRefreshLayout = view.findViewById(R.id.refresh);
@@ -70,7 +71,7 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
                 alertLogout.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                if (conn.isOnline(getActivity())){
+                                if (conn.isOnline()){
                                     logout();
                                 }
                                 else{
@@ -153,7 +154,7 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
         int color = ((ColorDrawable) toolbar.getBackground()).getColor();
         window.setStatusBarColor(color);
         for (int i = 1; i <= 20; i++){
-            array.add("Report " + i);
+            array.add("Report #" + i);
         }
         adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, array);
         listReport.setAdapter(adapter);
@@ -163,7 +164,7 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
     }
 
     public void redirect(){
-        if (cache.getUserPrefCache(getActivity()) == null){
+        if (cache.getUserPrefCache() == null){
             LoginFragment loginFragment = new LoginFragment();
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, loginFragment).commit();
         }

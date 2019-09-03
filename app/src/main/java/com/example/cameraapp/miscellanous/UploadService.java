@@ -43,7 +43,7 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
     ArrayList<String> uploadedImagePaths;
     String [] paths = {};
     UploadFileAsync uploadFileAsync;
-    Cache cache = new Cache();
+    Cache cache;
     Approval approval;
     Exam exam;
     SubReport subReport;
@@ -67,6 +67,7 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
     @Override
     public void onCreate() {
         super.onCreate();
+         cache = new Cache(this);
         createNotificationChannel();
         notificationIntent = new Intent(this, MainActivity.class);
         pendingIntentStartService = PendingIntent.getActivity(this,
@@ -131,7 +132,7 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
     }
 
     public void uploadImages(){
-        imagePaths = cache.getEvidenceDetailsCache(this).getImagePaths();
+        imagePaths = cache.getEvidenceDetailsCache().getImagePaths();
         uploadedImagePaths = new ArrayList<>();
         if (manager != null){
             uploadFileAsync = new UploadFileAsync(this, manager, notificationLayout, builder);
@@ -200,10 +201,10 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
     }
 
     public void uploadReportDetails(){
-        student = cache.getStudentInfoCache(this);
-        exam = cache.getExamInfoCache(this);
-        approval = cache.getApprovalDetailsCache(this);
-        subReport = cache.getSubReportDetailsCache(this);
+        student = cache.getStudentInfoCache();
+        exam = cache.getExamInfoCache();
+        approval = cache.getApprovalDetailsCache();
+        subReport = cache.getSubReportDetailsCache();
 
         report = new Report();
         report.setStudentId(student.getStudentId());

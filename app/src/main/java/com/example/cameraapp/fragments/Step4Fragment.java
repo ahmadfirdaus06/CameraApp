@@ -33,7 +33,7 @@ public class Step4Fragment extends Fragment {
 
     private ArrayList<String> checkboxList = new ArrayList<>();
     private int count = 0;
-    Cache cache = new Cache();
+    Cache cache;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -43,6 +43,7 @@ public class Step4Fragment extends Fragment {
     }
 
     public void onViewCreated (View view, Bundle savedInstanceState){
+        cache = new Cache(getActivity());
         checkBox1 = view.findViewById(R.id.cb1);
         checkBox2 = view.findViewById(R.id.cb2);
         checkBox3 = view.findViewById(R.id.cb3);
@@ -358,7 +359,7 @@ public class Step4Fragment extends Fragment {
         subReport.setTimeOfMisconduct(inputTimeOfMisconduct.getText().toString().trim());
         subReport.setMisconductDesc(inputMisconductDescription.getText().toString().trim());
         subReport.setActionTaken(inputActionTaken.getText().toString().trim());
-        if (cache.setSubReportDetailsCache(getActivity(), subReport)){
+        if (cache.setSubReportDetailsCache(subReport)){
             Step5Fragment step5Fragment = new Step5Fragment();
             getActivity().getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
@@ -368,8 +369,8 @@ public class Step4Fragment extends Fragment {
     }
 
     public void getSaved(){
-        if (cache.getSubReportDetailsCache(getActivity()) != null){
-            SubReport subReport = cache.getSubReportDetailsCache(getActivity());
+        if (cache.getSubReportDetailsCache() != null){
+            SubReport subReport = cache.getSubReportDetailsCache();
             checkboxList = subReport.getTypeOfMisconduct();
             for (int i = 0; i < checkboxList.size(); i++){
                 String misconduct = checkboxList.get(i);

@@ -56,9 +56,9 @@ public class Step5Fragment extends Fragment {
     GridLayout layoutButtonNext;
     AlertDialog alertDialog;
 
-    Cache cache = new Cache();
-    DataSource dataSource = new DataSource();
-    ConnectionCheck conn = new ConnectionCheck();
+    Cache cache;
+    DataSource dataSource;
+    ConnectionCheck conn;
     ChiefInvigilator invigilator = null;
     RequestQueue requestQueue;
     JsonObjectRequest jsonObjectRequest;
@@ -72,6 +72,9 @@ public class Step5Fragment extends Fragment {
     }
 
     public void onViewCreated (View view, Bundle savedInstanceState){
+        cache = new Cache(getActivity());
+        dataSource = new DataSource();
+        conn = new ConnectionCheck(getActivity());
         showOrHideReportedBy = view.findViewById(R.id.show_or_hide_reportedby);
         showOrHideApprovedBy = view.findViewById(R.id.show_or_hide_approved);
         showOrHideWitness1 = view.findViewById(R.id.show_or_hide_witness_1);
@@ -118,7 +121,7 @@ public class Step5Fragment extends Fragment {
         inputWitness2ContactNo.addTextChangedListener(validator);
         reportByLayout.setVisibility(View.GONE);
         showOrHideReportedBy.setText("More");
-        if (cache.getApprovalDetailsCache(getActivity()) != null){
+        if (cache.getApprovalDetailsCache() != null){
             getSaved();
         }
         else{
@@ -146,7 +149,7 @@ public class Step5Fragment extends Fragment {
         @Override
         public void onClick(View view) {
             if ((showOrHideApprovedBy.getText().toString()).equals("Less")){
-                if(cache.getApprovalDetailsCache(getActivity()) != null || invigilator != null){
+                if(cache.getApprovalDetailsCache() != null || invigilator != null){
                     approvedByLayout2.setVisibility(View.VISIBLE);
                 }
                 else{
@@ -157,7 +160,7 @@ public class Step5Fragment extends Fragment {
                 showOrHideApprovedBy.setText("More");
             }
             else if ((showOrHideApprovedBy.getText().toString()).equals("More")){
-                if(cache.getApprovalDetailsCache(getActivity()) != null || invigilator != null){
+                if(cache.getApprovalDetailsCache() != null || invigilator != null){
                     approvedByLayout2.setVisibility(View.VISIBLE);
                     approvedByLayout3.setVisibility(View.VISIBLE);
                 }
@@ -245,7 +248,7 @@ public class Step5Fragment extends Fragment {
                 inputSearchId.setBackgroundResource(R.drawable.red_input_field);
             }
             else {
-                if (conn.isOnline(getActivity())){
+                if (conn.isOnline()){
                     progressDialog.show();
                     HashMap<String, String> params = new HashMap();
                     params.put("staff_id", id);
@@ -268,7 +271,7 @@ public class Step5Fragment extends Fragment {
                                                 invigilator.setEmail(data.getString("email"));
                                                 invigilator.setUserType(data.getString("user_type"));
                                             }
-                                            if (cache.setChiefInvDetailsCache(getActivity(), invigilator)){
+                                            if (cache.setChiefInvDetailsCache(invigilator)){
                                                 textApproverName.setText(invigilator.getName());
                                                 textApproverId.setText(invigilator.getStaffId());
                                                 textApproverContactNo.setText(invigilator.getContactNo());
@@ -331,16 +334,16 @@ public class Step5Fragment extends Fragment {
         @Override
         public void onClick(View v) {
             Approval approval = new Approval();
-            approval.setReporterName(cache.getUserPrefCache(getActivity()).getName());
-            approval.setReporterUserId(cache.getUserPrefCache(getActivity()).getUserID());
-            approval.setReporterId(cache.getUserPrefCache(getActivity()).getStaffId());
-            approval.setReporterEmail(cache.getUserPrefCache(getActivity()).getEmail());
-            approval.setReporterContactNo(cache.getUserPrefCache(getActivity()).getContactNo());
-            approval.setSuperiorName(cache.getChiefInvDetailsCache(getActivity()).getName());
-            approval.setSuperiorId(cache.getChiefInvDetailsCache(getActivity()).getStaffId());
-            approval.setSuperiorUserId(cache.getChiefInvDetailsCache(getActivity()).getUserID());
-            approval.setSuperiorEmail(cache.getChiefInvDetailsCache(getActivity()).getEmail());
-            approval.setSuperiorContactNo(cache.getChiefInvDetailsCache(getActivity()).getContactNo());
+            approval.setReporterName(cache.getUserPrefCache().getName());
+            approval.setReporterUserId(cache.getUserPrefCache().getUserID());
+            approval.setReporterId(cache.getUserPrefCache().getStaffId());
+            approval.setReporterEmail(cache.getUserPrefCache().getEmail());
+            approval.setReporterContactNo(cache.getUserPrefCache().getContactNo());
+            approval.setSuperiorName(cache.getChiefInvDetailsCache().getName());
+            approval.setSuperiorId(cache.getChiefInvDetailsCache().getStaffId());
+            approval.setSuperiorUserId(cache.getChiefInvDetailsCache().getUserID());
+            approval.setSuperiorEmail(cache.getChiefInvDetailsCache().getEmail());
+            approval.setSuperiorContactNo(cache.getChiefInvDetailsCache().getContactNo());
             approval.setWitness1Name(inputWitness1Name.getText().toString().trim());
             approval.setWitness1Email(inputWitness1Email.getText().toString().trim());
             approval.setWitness1ContactNo(inputWitness1ContactNo.getText().toString().trim());
@@ -348,8 +351,8 @@ public class Step5Fragment extends Fragment {
             approval.setWitness2Email(inputWitness2Email.getText().toString().trim());
             approval.setWitness2ContactNo(inputWitness2ContactNo.getText().toString().trim());
 
-            if (cache.setApprovalDetailsCache(getActivity(), approval)){
-                if (conn.isOnline(getActivity())){
+            if (cache.setApprovalDetailsCache(approval)){
+                if (conn.isOnline()){
                     alertDialog = new AlertDialog.Builder(getActivity()).create();
                     alertDialog.setTitle("Confirm");
                     alertDialog.setMessage("Are you sure to upload report?\n(You may cancel this message to review the report details.)");
@@ -357,7 +360,7 @@ public class Step5Fragment extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    if (conn.isMobileData(getActivity())){
+                                    if (conn.isMobileData()){
                                         alertDialog = new AlertDialog.Builder(getActivity()).create();
                                         alertDialog.setTitle("Confirm");
                                         alertDialog.setMessage("Are you sure to upload using mobile data?\n(Data charges may apply.)");
@@ -505,7 +508,7 @@ public class Step5Fragment extends Fragment {
     };
 
     public void getSaved(){
-        Approval approval = cache.getApprovalDetailsCache(getActivity());
+        Approval approval = cache.getApprovalDetailsCache();
         invigilator = new ChiefInvigilator();
         if (approval != null){
             invigilator.setStaffId(approval.getSuperiorId());
@@ -546,8 +549,8 @@ public class Step5Fragment extends Fragment {
     }
 
     public void newFill(){
-        if (cache.getUserPrefCache(getActivity()) != null){
-            User user = cache.getUserPrefCache(getActivity());
+        if (cache.getUserPrefCache() != null){
+            User user = cache.getUserPrefCache();
             textReporterName.setText(user.getName());
             textReporterId.setText(user.getStaffId());
             textReporterContactNo.setText(user.getContactNo());
