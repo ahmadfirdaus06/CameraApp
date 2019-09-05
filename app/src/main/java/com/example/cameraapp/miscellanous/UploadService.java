@@ -67,7 +67,7 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
     @Override
     public void onCreate() {
         super.onCreate();
-         cache = new Cache(this);
+        cache = new Cache(this);
         createNotificationChannel();
         notificationIntent = new Intent(this, MainActivity.class);
         pendingIntentStartService = PendingIntent.getActivity(this,
@@ -92,6 +92,7 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
             stopSelf();
         }
         else{
+            startForeground(1, notification);
             notificationLayout.setTextViewText(R.id.text_status, "Please wait...");
             builder.setProgress(0,0, true);
 
@@ -182,6 +183,7 @@ public class UploadService extends Service implements UploadFileAsync.AsyncRespo
                                 stopCurrentService();
                             }
                         } catch (JSONException e) {
+                            e.printStackTrace();
                             failUploadNotify();
                             Toast.makeText(getApplicationContext(),
                                     "Upload Failed. Try again later.", Toast.LENGTH_SHORT).show();

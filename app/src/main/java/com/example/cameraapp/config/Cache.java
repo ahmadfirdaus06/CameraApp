@@ -2,6 +2,7 @@ package com.example.cameraapp.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -10,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.cameraapp.miscellanous.InsertSQLiteAsync;
 import com.example.cameraapp.models.Approval;
 import com.example.cameraapp.models.Attachment;
 import com.example.cameraapp.models.ChiefInvigilator;
@@ -26,17 +28,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Cache {
 
 
     private Context context;
-    private ConnectionCheck conn = new ConnectionCheck(context);
-    private DataSource dataSource = new DataSource();
+    private ConnectionCheck conn;
+    private DataSource dataSource;
     private RequestQueue requestQueue;
     private JsonObjectRequest objectRequest;
+    SQLiteHelper db;
+    InsertSQLiteAsync insertSQLiteAsync;
 
     public Cache(Context context) {
         this.context = context;
+        conn = new ConnectionCheck(this.context);
+        dataSource = new DataSource();
     }
 
     public User getUserPrefCache(){
@@ -302,110 +310,46 @@ public class Cache {
         }
 
         if (conn.isOnline()){
-            if (conn.serverCheck()){
-                requestQueue = Volley.newRequestQueue(context);
-                objectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                String message = "";
-                                try {
-                                    message = response.getString("message");
-                                    if (message.equals("Success")){
-                                        JSONArray users = response.getJSONArray("userList");
-                                        JSONArray students = response.getJSONArray("studentList");
-                                        JSONArray reports = response.getJSONArray("reportList");
-                                        JSONArray attachments = response.getJSONArray("attachmentList");
-                                        JSONArray misconducts = response.getJSONArray("misconductList");
-
-                                        User user = new User();
-                                        for (int i = 0; i < users.length(); i++){
-                                            user.setUserID(users.getJSONObject(i).getString("user_id"));
-                                            user.setStaffId(users.getJSONObject(i).getString("staff_id"));
-                                            user.setName(users.getJSONObject(i).getString("name"));
-                                            user.setPassword(users.getJSONObject(i).getString("password"));
-                                            user.setContactNo(users.getJSONObject(i).getString("contact_no"));
-                                            user.setEmail(users.getJSONObject(i).getString("email"));
-                                            user.setUserType(users.getJSONObject(i).getString("user_type"));
-                                            user.setCreatedDate(users.getJSONObject(i).getString("created_date"));
-                                            user.setLastLogin(users.getJSONObject(i).getString("last_login"));
-                                            user.setModifiedDate(users.getJSONObject(i).getString("modified_date"));
-                                            //insert into local db
-                                        }
-
-                                        Student student = new Student();
-                                        for (int i = 0; i < students.length(); i++){
-                                            student.setStudentId(students.getJSONObject(i).getString("student_id"));
-                                            student.setMatricId(students.getJSONObject(i).getString("matric_id"));
-                                            student.setName(students.getJSONObject(i).getString("name"));
-                                            student.setIcOrPassport(students.getJSONObject(i).getString("ic_or_passport"));
-                                            student.setProgramme(students.getJSONObject(i).getString("programme"));
-                                            student.setContactNo(students.getJSONObject(i).getString("contact_no"));
-                                            student.setEmail(students.getJSONObject(i).getString("email"));
-                                            //insert into local db
-                                        }
-
-                                        Report report = new Report();
-                                        for (int i = 0; i < reports.length(); i++){
-                                            report.setReport_id(reports.getJSONObject(i).getString("report_id"));
-                                            report.setStudentId(reports.getJSONObject(i).getString("student_id"));
-                                            report.setReporterUserId(reports.getJSONObject(i).getString("reporter_id"));
-                                            report.setSuperiorUserId(reports.getJSONObject(i).getString("superior_id"));
-                                            report.setCourseCode(reports.getJSONObject(i).getString("course_code"));
-                                            report.setCourseName(reports.getJSONObject(i).getString("course_name"));
-                                            report.setExamDate(reports.getJSONObject(i).getString("exam_date"));
-                                            report.setExamTime(reports.getJSONObject(i).getString("exam_time"));
-                                            report.setExamVenue(reports.getJSONObject(i).getString("exam_venue"));
-                                            report.setMisconductTime(reports.getJSONObject(i).getString("misconduct_time"));
-                                            report.setMisconductDescription(reports.getJSONObject(i).getString("misconduct_description"));
-                                            report.setActionTaken(reports.getJSONObject(i).getString("action_taken"));
-                                            report.setWitness1Name(reports.getJSONObject(i).getString("witness1_name"));
-                                            report.setWitness1ContactNo(reports.getJSONObject(i).getString("witness1_contact_no"));
-                                            report.setWitness1Email(reports.getJSONObject(i).getString("witness1_email"));
-                                            report.setWitness2Name(reports.getJSONObject(i).getString("witness2_name"));
-                                            report.setWitness2ContactNo(reports.getJSONObject(i).getString("witness2_contact_no"));
-                                            report.setWitness2Email(reports.getJSONObject(i).getString("witness2_email"));
-                                            //insert into local db
-                                        }
-
-                                        Attachment attachment = new Attachment();
-                                        for (int i = 0; i < attachments.length(); i++){
-                                            attachment.setAttachment_id(attachments.getJSONObject(i).getString("attachment_id"));
-                                            attachment.setPath(attachments.getJSONObject(i).getString("path"));
-                                            attachment.setReportId(attachments.getJSONObject(i).getString("report_id"));
-                                            //insert into local db
-                                        }
-
-                                        Misconduct misconduct = new Misconduct();
-                                        for (int i = 0; i < misconducts.length(); i++){
-                                            misconduct.setMisconductId(misconducts.getJSONObject(i).getString("misconduct_id"));
-                                            misconduct.setType(misconducts.getJSONObject(i).getString("type"));
-                                            misconduct.setReportId(misconducts.getJSONObject(i).getString("report_id"));
-                                            //insert into local db
-                                        }
-
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+            requestQueue = Volley.newRequestQueue(context);
+            objectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            String message = "";
+                            try {
+                                message = response.getString("message");
+                                if (message.equals("Success")){
+                                    JSONArray users = response.getJSONArray("userList");
+                                    JSONArray students = response.getJSONArray("studentList");
+                                    JSONArray reports = response.getJSONArray("reportList");
+                                    JSONArray attachments = response.getJSONArray("attachmentList");
+                                    JSONArray misconducts = response.getJSONArray("misconductList");
+                                    db = new SQLiteHelper(context);
+                                    InsertSQLiteAsync insertSQLiteAsync = new InsertSQLiteAsync(context);
+                                    insertSQLiteAsync.execute(users, students, reports, attachments, misconducts);
                                 }
-
+                            } catch (JSONException e) {
+                                System.out.println(e);
+                                Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                    }
-                });
-
-                requestQueue.add(objectRequest);
-            }
-            else{
-                Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
-            }
+            requestQueue.add(objectRequest);
         }
         else{
             Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public ArrayList<Report> getReport(){
+        db = new SQLiteHelper(context);
+        return db.getReport();
     }
 
     public boolean removeAllReportCache(){

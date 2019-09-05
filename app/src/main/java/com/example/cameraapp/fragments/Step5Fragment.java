@@ -1,9 +1,12 @@
 package com.example.cameraapp.fragments;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -352,55 +355,64 @@ public class Step5Fragment extends Fragment {
             approval.setWitness2ContactNo(inputWitness2ContactNo.getText().toString().trim());
 
             if (cache.setApprovalDetailsCache(approval)){
-                if (conn.isOnline()){
-                    alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle("Confirm");
-                    alertDialog.setMessage("Are you sure to upload report?\n(You may cancel this message to review the report details.)");
-                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    if (conn.isMobileData()){
-                                        alertDialog = new AlertDialog.Builder(getActivity()).create();
-                                        alertDialog.setTitle("Confirm");
-                                        alertDialog.setMessage("Are you sure to upload using mobile data?\n(Data charges may apply.)");
-                                        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes",
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                                                        upload();
-                                                    }
-                                                });
-                                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int i) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-                                        alertDialog.show();
-                                    }
-                                    else{
-                                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                                        upload();
-                                    }
-                                }
-                            });
-                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int i) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
+                if(ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.SEND_SMS) != PackageManager
+                        .PERMISSION_GRANTED)
+                {
+                    requestPermissions(
+                            new String[]{Manifest.permission.SEND_SMS},
+                            2000);
                 }
                 else{
-                    Toast.makeText(getActivity(), "No internet connection!", Toast.LENGTH_SHORT).show();
+                    if (conn.isOnline()){
+                        alertDialog = new AlertDialog.Builder(getActivity()).create();
+                        alertDialog.setTitle("Confirm");
+                        alertDialog.setMessage("Are you sure to upload report?\n(You may cancel this message to review the report details.)");
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        if (conn.isMobileData()){
+                                            alertDialog = new AlertDialog.Builder(getActivity()).create();
+                                            alertDialog.setTitle("Confirm");
+                                            alertDialog.setMessage("Are you sure to upload using mobile data?\n(Data charges may apply.)");
+                                            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes",
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                                            upload();
+                                                        }
+                                                    });
+                                            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int i) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+                                            alertDialog.show();
+                                        }
+                                        else{
+                                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                            upload();
+                                        }
+                                    }
+                                });
+                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int i) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                    else{
+                        Toast.makeText(getActivity(), "No internet connection!", Toast.LENGTH_SHORT).show();
+                    }
                 }
-
             }
             else{
                 Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();

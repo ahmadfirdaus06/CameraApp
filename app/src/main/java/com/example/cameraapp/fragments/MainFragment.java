@@ -26,6 +26,8 @@ import com.example.cameraapp.config.Cache;
 import com.example.cameraapp.config.ConnectionCheck;
 import com.example.cameraapp.miscellanous.LogAccessRequestAsync;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 

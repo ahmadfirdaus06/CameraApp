@@ -1,5 +1,6 @@
 package com.example.cameraapp;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -8,10 +9,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.constraint.Constraints;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +25,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
+import android.telephony.SmsManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -46,6 +52,9 @@ import com.example.cameraapp.fragments.Step1Fragment;
 import com.example.cameraapp.miscellanous.CustomUploadingBar;
 import com.example.cameraapp.miscellanous.UploadService;
 import com.example.cameraapp.models.Student;
+
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,17 +89,6 @@ public class MainActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.toolbar_color));
         redirectToLogin();
-        db = new SQLiteHelper(this);
-        Student student = new Student();
-        student.setStudentId("123");
-        student.setMatricId("123");
-        student.setIcOrPassport("134");
-        student.setName("abc");
-        student.setProgramme("abc");
-        student.setContactNo("0123");
-        student.setEmail("abc@gmail.com");
-        db.addStudent(student);
-
     }
 
     public void redirectToLogin(){
@@ -173,6 +171,31 @@ public class MainActivity extends AppCompatActivity {
         textReportId.setText("Report #" + reportId);
         textReview.setOnClickListener(review);
         dialog.show();
+
+        if(ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS) != PackageManager
+                .PERMISSION_GRANTED)
+        {
+            Toast.makeText(this, "Couldn't notify student. Permission not allowed." , Toast.LENGTH_SHORT).show();
+        }
+        else {
+            try {
+                String phoneNum = "+6" + cache.getStudentInfoCache().getContactNo();;
+
+                String message = "ATTENTION! This message was sent directly from IUKL " +
+                        "Counselory Department. You are receiving this message because you are being" +
+                        " suspected for committing examination misconduct in exam hall. Please contact " +
+                        "The Counselor from IUKL Counselory Department immediately for more details about this message.";
+
+                SmsManager smsManager = SmsManager.getDefault();
+                ArrayList<String> messageParts = smsManager.divideMessage(message);
+                        smsManager.sendMultipartTextMessage(phoneNum, null, messageParts, null, null);
+                Toast.makeText(this, "Student has been notified." , Toast.LENGTH_SHORT).show();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
     }
 
     public void upload(){
@@ -326,5 +349,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cache.getData();
     }
 }
