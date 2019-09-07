@@ -300,50 +300,52 @@ public class Cache {
     }
 
     public void getData(){
-        String userId = getUserPrefCache().getUserID();
-        String url = dataSource.getGetAllReportsDataUrl();
-        JSONObject object = new JSONObject();
-        try {
-            object.put("user_id", userId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        if (getUserPrefCache() != null){
+            String userId = getUserPrefCache().getUserID();
+            String url = dataSource.getGetAllReportsDataUrl();
+            JSONObject object = new JSONObject();
+            try {
+                object.put("user_id", userId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        if (conn.isOnline()){
-            requestQueue = Volley.newRequestQueue(context);
-            objectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            String message = "";
-                            try {
-                                message = response.getString("message");
-                                if (message.equals("Success")){
-                                    JSONArray users = response.getJSONArray("userList");
-                                    JSONArray students = response.getJSONArray("studentList");
-                                    JSONArray reports = response.getJSONArray("reportList");
-                                    JSONArray attachments = response.getJSONArray("attachmentList");
-                                    JSONArray misconducts = response.getJSONArray("misconductList");
-                                    db = new SQLiteHelper(context);
-                                    InsertSQLiteAsync insertSQLiteAsync = new InsertSQLiteAsync(context);
-                                    insertSQLiteAsync.execute(users, students, reports, attachments, misconducts);
+            if (conn.isOnline()){
+                requestQueue = Volley.newRequestQueue(context);
+                objectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                String message = "";
+                                try {
+                                    message = response.getString("message");
+                                    if (message.equals("Success")){
+                                        JSONArray users = response.getJSONArray("userList");
+                                        JSONArray students = response.getJSONArray("studentList");
+                                        JSONArray reports = response.getJSONArray("reportList");
+                                        JSONArray attachments = response.getJSONArray("attachmentList");
+                                        JSONArray misconducts = response.getJSONArray("misconductList");
+                                        db = new SQLiteHelper(context);
+                                        InsertSQLiteAsync insertSQLiteAsync = new InsertSQLiteAsync(context);
+                                        insertSQLiteAsync.execute(users, students, reports, attachments, misconducts);
+                                    }
+                                } catch (JSONException e) {
+                                    System.out.println(e);
+                                    Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
                                 }
-                            } catch (JSONException e) {
-                                System.out.println(e);
-                                Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
-                }
-            });
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-            requestQueue.add(objectRequest);
-        }
-        else{
-            Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+                requestQueue.add(objectRequest);
+            }
+            else{
+                Toast.makeText(context, "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
