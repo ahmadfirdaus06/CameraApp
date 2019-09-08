@@ -280,6 +280,14 @@
                             android:textColorHighlight="@android:color/darker_gray"
                             android:textCursorDrawable="@null" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Click the 'Search' button to fill approver details"
+                            android:textAlignment="center"
+                            android:padding="5dp"/>
+
                         <Button
                             android:id="@+id/button_search"
                             android:layout_width="match_parent"
@@ -287,8 +295,7 @@
                             android:background="@drawable/blue_button"
                             android:foreground="@drawable/ripple_effect"
                             android:text="Search"
-                            android:textColor="@color/white"
-                            android:layout_marginTop="16dp"/>
+                            android:textColor="@color/white"/>
 
                     </LinearLayout>
 

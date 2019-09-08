@@ -12,6 +12,10 @@ import com.example.cameraapp.models.Report;
 import com.example.cameraapp.models.Student;
 import com.example.cameraapp.models.User;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -211,13 +215,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<Report> getReport(){
         db = this.getReadableDatabase();
         ArrayList<Report> allReports = new ArrayList<>();
-        Report report = new Report();
-        String query = "SELECT * FROM " + TABLE_REPORT;
+        Report report;
+        String query = "SELECT * FROM " + TABLE_REPORT  + " ORDER BY datetime(uploaded_by) DESC";
         Cursor result = db.rawQuery(query, null);
         if (result.moveToFirst()) {
-            while (result.moveToNext()) {
+            while (!result.isAfterLast()) {
+                report = new Report();
                 report.setReport_id(result.getString(1));
-                System.out.println(result.getString(1));
                 report.setStudentId(result.getString(2));
                 report.setCourseCode(result.getString(3));
                 report.setCourseName(result.getString(4));
@@ -241,10 +245,85 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 report.setLastApprovalDate(result.getString(22));
                 report.setIsValid(result.getString(23));
                 allReports.add(report);
+                result.moveToNext();
             }
+
         }
         db.close();
         return allReports;
+    }
+
+    public JSONObject getReportAssoc(String reportId){
+        db = this.getReadableDatabase();
+
+        String queryReport = "SELECT report.report_id, report.uploaded_by, report.report_status, report.misconduct_description, student.matric_id, student.name FROM " + TABLE_REPORT
+                + " INNER JOIN " + TABLE_STUDENT + " ON report.student_id = student.student_id WHERE report_id = ?";
+        String queryMisconduct = "SELECT type FROM " + TABLE_MISCONDUCT + " WHERE report_id = ?";
+        String queryAttachment = "SELECT path FROM " + TABLE_ATTACHMENT + " WHERE report_id = ?";
+
+        Report report;
+        Student student;
+        Misconduct misconduct;
+        Attachment attachment;
+
+//        ArrayList<Report> reports = new ArrayList<>();
+//        ArrayList<Student> students = new ArrayList<>();
+//        ArrayList<Misconduct> misconducts = new ArrayList<>();
+//        ArrayList<Attachment> attachments = new ArrayList<>();
+
+        JSONObject reportDetails = new JSONObject();
+        ArrayList<String> misconducts = new ArrayList<>();
+        ArrayList<String> attachments = new ArrayList<>();
+
+        Cursor reportResult  = db.rawQuery(queryReport, new String[]{String.valueOf(reportId)});
+        Cursor misconductResult = db.rawQuery(queryMisconduct, new String[]{String.valueOf(reportId)});
+        Cursor attachmentResult = db.rawQuery(queryAttachment, new String[]{String.valueOf(reportId)});
+
+        reportResult.moveToFirst();
+        try {
+            reportDetails.put("report_id", reportResult.getString(0));
+            reportDetails.put("uploaded_by", reportResult.getString(1));
+            reportDetails.put("report_status", reportResult.getString(2));
+            reportDetails.put("misconduct_description", reportResult.getString(3));
+            reportDetails.put("matric_id", reportResult.getString(4));
+            reportDetails.put("name", reportResult.getString(5));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (misconductResult.moveToFirst()) {
+            while (!misconductResult.isAfterLast()) {
+                misconducts.add(misconductResult.getString(0));
+                misconductResult.moveToNext();
+            }
+        }
+
+        if (attachmentResult.moveToFirst()) {
+            while (!attachmentResult.isAfterLast()) {
+                attachments.add(attachmentResult.getString(0));
+                attachmentResult.moveToNext();
+            }
+        }
+
+        db.close();
+
+        JSONArray misconductList, attachmentList;
+
+        misconductList = new JSONArray(misconducts);
+        attachmentList = new JSONArray(attachments);
+
+
+
+        JSONObject results = new JSONObject();
+        try {
+            results.put("report_details", reportDetails);
+            results.put("misconductList", misconductList);
+            results.put("attachmentList", attachmentList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return results;
     }
 
     public ArrayList<Student> getStudentDetails(){

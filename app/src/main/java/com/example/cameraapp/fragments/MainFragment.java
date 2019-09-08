@@ -1,50 +1,75 @@
 package com.example.cameraapp.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.cameraapp.R;
 import com.example.cameraapp.config.Cache;
 import com.example.cameraapp.config.ConnectionCheck;
+import com.example.cameraapp.config.DataSource;
+import com.example.cameraapp.miscellanous.GetDataAsync;
 import com.example.cameraapp.miscellanous.LogAccessRequestAsync;
+import com.example.cameraapp.adapters.ReportAdapter;
+import com.example.cameraapp.models.Report;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends Fragment implements LogAccessRequestAsync.AsyncResponse{
+public class MainFragment extends Fragment implements LogAccessRequestAsync.AsyncResponse, GetDataAsync.AsyncResponse {
 
     private ConnectionCheck conn;
     private Cache cache;
     private Window window;
     private Toolbar toolbar;
-    private ListView listReport;
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab;
     private List<String> array= new ArrayList<String>();
-    private ArrayAdapter<String> adapter;
     private AlertDialog alertAddReport, alertLogout;
     private LogAccessRequestAsync logAccessRequestAsync;
     private ProgressDialog progressDialog;
+    private ReportAdapter adapter;
+    private RecyclerView listReport;
+    private RecyclerView.LayoutManager layoutManager;
+    private TextView textNoReport;
+    private GetDataAsync getDataAsync;
+    private GetDataAsync.AsyncResponse getDataResponse;
+    private JsonObjectRequest objectRequest;
+    private RequestQueue requestQueue;
+    private DataSource dataSource;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -54,14 +79,15 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
     }
 
     public void onViewCreated (View view, Bundle savedInstanceState){
+        dataSource = new DataSource();
         conn = new ConnectionCheck(getActivity());
         cache = new Cache(getActivity());
         toolbar = view.findViewById(R.id.toolbar);
         listReport = view.findViewById(R.id.list_report);
         swipeRefreshLayout = view.findViewById(R.id.refresh);
         fab = view.findViewById(R.id.fab);
+        textNoReport = view.findViewById(R.id.text_no_report);
         setup();
-
     }
 
     private Toolbar.OnMenuItemClickListener menuSetup = new Toolbar.OnMenuItemClickListener() {
@@ -91,31 +117,19 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
                 alertLogout.show();
             }
             else if(menuItem.getItemId() == R.id.user_profile){
-                System.out.println("User Profile");
+                EditProfileFragment editProfileFragment = new EditProfileFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                        .replace(R.id.container, editProfileFragment, "editProfileFragment")
+                        .addToBackStack(null).commit();
             }
             return false;
-        }
-    };
-
-    private AdapterView.OnItemClickListener clickList = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String report = listReport.getItemAtPosition(position).toString();
-            Bundle data = new Bundle();
-            data.putString("report", report);
-            ReportStatusFragment reportStatusFragment = new ReportStatusFragment();
-            reportStatusFragment.setArguments(data);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.container, reportStatusFragment).addToBackStack(null).commit();
         }
     };
 
     private SwipeRefreshLayout.OnRefreshListener refresh = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            adapter.notifyDataSetChanged();
-            swipeRefreshLayout.setRefreshing(false);
+            refreshData(1);
         }
     };
 
@@ -127,11 +141,13 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
             alertAddReport.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Step1Fragment step1Fragment = new Step1Fragment();
-                            getActivity().getSupportFragmentManager().beginTransaction()
-                                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
-                                    .replace(R.id.container, step1Fragment, "step1Fragment")
-                                    .addToBackStack(null).commit();
+                            if (cache.removeAllReportCache()){
+                                Step1Fragment step1Fragment = new Step1Fragment();
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                                        .replace(R.id.container, step1Fragment, "step1Fragment")
+                                        .addToBackStack(null).commit();
+                            }
                         }
                     });
             alertAddReport.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
@@ -145,6 +161,18 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
         }
     };
 
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if(dy > 0){
+                fab.hide();
+            } else{
+                fab.show();
+            }
+        }
+    };
+
     public void setup(){
         toolbar.setTitle("My Report");
         toolbar.setTitleTextColor(Color.WHITE);
@@ -155,14 +183,106 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         int color = ((ColorDrawable) toolbar.getBackground()).getColor();
         window.setStatusBarColor(color);
-        for (int i = 1; i <= 20; i++){
-            array.add("Report #" + i);
-        }
-        adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, array);
-        listReport.setAdapter(adapter);
-        listReport.setOnItemClickListener(clickList);
         swipeRefreshLayout.setOnRefreshListener(refresh);
         fab.setOnClickListener(add);
+        listReport.addOnScrollListener(scrollListener);
+        layoutManager = new LinearLayoutManager(getActivity());
+        listReport.setLayoutManager(layoutManager);
+        listReport.setItemAnimator(new DefaultItemAnimator());
+        listReport.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        setListDetails();
+        getDataResponse = this;
+    }
+
+
+    public void setListDetails(){
+        adapter = new ReportAdapter(getActivity(), cache.getReport(), new ReportAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Report report) {
+                ReportSummaryFragment reportSummaryFragment = new ReportSummaryFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("report_id", report.getReport_id());
+                reportSummaryFragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right,
+                        R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                        .replace(R.id.container, reportSummaryFragment, "reportSummaryFragment")
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
+        updateUI();
+    }
+
+    public void updateUI(){
+        if (adapter != null && adapter.getItemCount() > 0){
+            textNoReport.setVisibility(View.INVISIBLE);
+            listReport.setVisibility(View.VISIBLE);
+            listReport.setAdapter(adapter);
+        }
+        else{
+            textNoReport.setVisibility(View.VISIBLE);
+            listReport.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void refreshData(int type){
+        if (type == 1){
+            swipeRefreshLayout.setRefreshing(true);
+        }
+        else if (type == 0){
+            swipeRefreshLayout.setRefreshing(false);
+        }
+        if (cache.getUserPrefCache() != null){
+            String userId = cache.getUserPrefCache().getUserID();
+            String url = dataSource.getGetAllReportsDataUrl();
+            JSONObject object = new JSONObject();
+            try {
+                object.put("user_id", userId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (conn.isOnline()){
+                requestQueue = Volley.newRequestQueue(getActivity());
+                objectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                String message = "";
+                                try {
+                                    message = response.getString("message");
+                                    if (message.equals("Success")){
+                                        JSONArray users = response.getJSONArray("userList");
+                                        JSONArray students = response.getJSONArray("studentList");
+                                        JSONArray reports = response.getJSONArray("reportList");
+                                        JSONArray attachments = response.getJSONArray("attachmentList");
+                                        JSONArray misconducts = response.getJSONArray("misconductList");
+                                        getDataAsync = new GetDataAsync(getActivity());
+                                        getDataAsync.setListener(getDataResponse).execute(users, students, reports, attachments, misconducts);
+                                    }
+                                } catch (JSONException e) {
+                                    System.out.println(e);
+                                    Toast.makeText(getActivity(), "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+
+                requestQueue.add(objectRequest);
+            }
+            else{
+                Toast.makeText(getActivity(), "Couln't fetch data, Try again later",Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
     }
 
     public void redirect(){
@@ -181,12 +301,16 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
     public void onResume(){
         super.onResume();
         redirect();
+        refreshData(0);
     }
 
     @Override
     public void processFinish(boolean response) {
         if (response){
-            redirect();
+            if(cache.removeAllData()){
+                redirect();
+            }
+
         }else{
             Toast.makeText(getActivity(), "Logout failed!", Toast.LENGTH_SHORT).show();
         }
@@ -203,5 +327,25 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
     @Override
     public void finish() {
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void startGetData() {
+
+    }
+
+    @Override
+    public void finishGetData() {
+        swipeRefreshLayout.setRefreshing(false);
+        adapter.refreshAdapter(cache.getReport());
+        updateUI();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (swipeRefreshLayout != null){
+            refreshData(1);
+        }
     }
 }

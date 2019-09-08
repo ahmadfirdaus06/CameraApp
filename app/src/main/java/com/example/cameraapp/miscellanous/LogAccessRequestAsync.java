@@ -124,6 +124,7 @@ public class LogAccessRequestAsync extends AsyncTask<JSONObject, Void, Boolean> 
                                 user.setCreatedDate(data.getString("created_date"));
                                 user.setModifiedDate(data.getString("modified_date"));
                                 user.setLastLogin(data.getString("last_login"));
+                                user.setGrantedAccess(data.getString("granted_access"));
                                 if (cache.setUserPrefCache(user)){
                                     granted = true;
                                 }
@@ -137,9 +138,7 @@ public class LogAccessRequestAsync extends AsyncTask<JSONObject, Void, Boolean> 
                     else if (requestType == LOGOUT){
                         System.out.println(response.getString("message"));
                         if (response.getString("message").contains("Success")){
-                            if (cache.removeUserPrefCache()){
-                                granted = true;
-                            }
+                            granted = true;
                         }
                         else{
                             granted = false;

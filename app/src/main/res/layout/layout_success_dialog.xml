@@ -37,7 +37,7 @@
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Review"
+        android:text="Got it"
         android:textAlignment="center"
         android:textSize="8pt"
         android:padding="15dp"

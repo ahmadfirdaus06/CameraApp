@@ -14,15 +14,26 @@ import com.example.cameraapp.models.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class InsertSQLiteAsync extends AsyncTask<JSONArray, Void, Void> {
+public class GetDataAsync extends AsyncTask<JSONArray, Void, Void> {
 
+    private AsyncResponse response;
     private SQLiteHelper db;
     private Context context;
     private JSONArray users, students, reports, attachments, misconducts;
 
-    public InsertSQLiteAsync(Context context) {
+    public GetDataAsync(Context context) {
         this.context = context;
         db = new SQLiteHelper(this.context);
+    }
+
+    public interface AsyncResponse {
+        public void startGetData();
+        public void finishGetData();
+    }
+
+    public GetDataAsync setListener(AsyncResponse response) {
+        this.response = response;
+        return this;
     }
 
     @Override
@@ -122,9 +133,15 @@ public class InsertSQLiteAsync extends AsyncTask<JSONArray, Void, Void> {
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        this.response.startGetData();
+    }
+
+    @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        Toast.makeText(context,"Data Loaded Successfully.", Toast.LENGTH_SHORT).show();
+        this.response.finishGetData();
         System.out.println("Data Loaded Successfully.");
     }
 }

@@ -13,18 +13,25 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.cameraapp.R;
+import com.example.cameraapp.config.DataSource;
 import com.example.cameraapp.fragments.EnlargeImageFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
 public class ImageSliderAdapter extends PagerAdapter {
 
-    Context context;
-    ArrayList<String> imagePaths;
+    private Context context;
+    private ArrayList<String> imagePaths;
+    private JSONArray jsonImagePaths;
+    private DataSource dataSource = new DataSource();
 
-    public ImageSliderAdapter(Context context, ArrayList<String> imagePaths) {
+    public ImageSliderAdapter(Context context, ArrayList<String> imagePaths, JSONArray jsonImagePaths) {
         this.context = context;
         this.imagePaths = imagePaths;
+        this.jsonImagePaths = jsonImagePaths;
     }
 
     @Override
@@ -34,7 +41,16 @@ public class ImageSliderAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return imagePaths.size();
+        int size = 0;
+
+        if (imagePaths != null){
+            size = imagePaths.size();
+        }
+        else if (jsonImagePaths != null){
+            size = jsonImagePaths.length();
+        }
+
+        return size;
     }
 
     @Override
@@ -45,8 +61,21 @@ public class ImageSliderAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
-        ImageView imageView = new ImageView(context);
-        Glide.with(context).load(imagePaths.get(position)).into(imageView);
+        final ImageView imageView = new ImageView(context);
+        String imageUrl = null;
+
+        if (imagePaths != null){
+            Glide.with(context).load(imagePaths.get(position)).into(imageView);
+        }
+        else if (jsonImagePaths != null){
+            try {
+                imageUrl = dataSource.getImagePath() + jsonImagePaths.getString(position);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Glide.with(context).load(imageUrl).into(imageView);
+        }
+
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 2;
@@ -57,11 +86,19 @@ public class ImageSliderAdapter extends PagerAdapter {
             public void onClick(View v) {
                 EnlargeImageFragment enlargeImageFragment = new EnlargeImageFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("imagePath", imagePaths.get(position));
+                if (imagePaths != null){
+                    bundle.putString("imagePath", imagePaths.get(position));
+                }else if (jsonImagePaths != null){
+                    try {
+                        bundle.putString("imagePath", dataSource.getImagePath() + jsonImagePaths.getString(position));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
                 enlargeImageFragment.setArguments(bundle);
                 FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.container, enlargeImageFragment).addToBackStack(null).commit();
+                ft.add(R.id.container, enlargeImageFragment).addToBackStack(null).commit();
             }
         });
         return imageView;

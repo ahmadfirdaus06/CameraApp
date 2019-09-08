@@ -381,7 +381,6 @@ public class Step5Fragment extends Fragment {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             dialog.dismiss();
-                                                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                                             upload();
                                                         }
                                                     });
@@ -395,7 +394,6 @@ public class Step5Fragment extends Fragment {
                                             alertDialog.show();
                                         }
                                         else{
-                                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                             upload();
                                         }
                                     }
@@ -607,6 +605,7 @@ public class Step5Fragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         progressDialog.dismiss();
+                        getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         Intent serviceIntent = new Intent(getActivity(), UploadService.class);
                         ContextCompat.startForegroundService(getActivity(), serviceIntent);
 

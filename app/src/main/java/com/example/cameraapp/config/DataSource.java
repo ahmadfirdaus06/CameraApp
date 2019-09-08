@@ -15,6 +15,8 @@ public class DataSource {
     private String uploadReportDetailsUrl = "http://" + host + ":8080/iukl-semms/semms/api/report/upload-report-details.php";
     private String uploadImageDetailsUrl = "http://" + host + ":8080/iukl-semms/semms/api/report/upload-image-details.php";
     private String getAllReportsDataUrl = "http://" + host + ":8080/iukl-semms/semms/api/report/fetch-all-reports-details.php";
+    private String imagePath = "http://" + host + ":8080/semms-uploads/";
+    private String updateUserData = "http://" + host + ":8080/iukl-semms/semms/api/user/update-user-data-mobile.php";
 
     public DataSource() {
     }
@@ -53,5 +55,13 @@ public class DataSource {
 
     public String getGetAllReportsDataUrl() {
         return getAllReportsDataUrl;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public String getUpdateUserData() {
+        return updateUserData;
     }
 }

@@ -76,7 +76,7 @@ public class Step3Fragment extends Fragment {
         fabDeletePic.setOnClickListener(deletePic);
         if (cache.getEvidenceDetailsCache() != null){
             ArrayList<String> imagePaths = cache.getEvidenceDetailsCache().getImagePaths();
-            adapter = new ImageSliderAdapter(getActivity(), imagePaths);
+            adapter = new ImageSliderAdapter(getActivity(), imagePaths, null);
             imageSlider.setAdapter(adapter);
             adapter.notifyDataSetChanged();
             imageSlider.setOnScrollChangeListener(slideListener);
@@ -205,7 +205,6 @@ public class Step3Fragment extends Fragment {
     };
 
     private View.OnScrollChangeListener slideListener = new View.OnScrollChangeListener() {
-        @SuppressLint("RestrictedApi")
         @Override
         public void onScrollChange(View view, int i, int i1, int i2, int i3) {
             imageCounter.setText((imageSlider.getCurrentItem() + 1) + " of " + imageSlider.getAdapter().getCount());

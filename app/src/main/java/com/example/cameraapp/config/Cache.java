@@ -2,7 +2,6 @@ package com.example.cameraapp.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -11,13 +10,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.cameraapp.miscellanous.InsertSQLiteAsync;
+import com.example.cameraapp.miscellanous.GetDataAsync;
 import com.example.cameraapp.models.Approval;
-import com.example.cameraapp.models.Attachment;
 import com.example.cameraapp.models.ChiefInvigilator;
 import com.example.cameraapp.models.Evidence;
 import com.example.cameraapp.models.Exam;
-import com.example.cameraapp.models.Misconduct;
 import com.example.cameraapp.models.Report;
 import com.example.cameraapp.models.Student;
 import com.example.cameraapp.models.SubReport;
@@ -39,7 +36,7 @@ public class Cache {
     private RequestQueue requestQueue;
     private JsonObjectRequest objectRequest;
     SQLiteHelper db;
-    InsertSQLiteAsync insertSQLiteAsync;
+    GetDataAsync getDataAsync;
 
     public Cache(Context context) {
         this.context = context;
@@ -325,9 +322,8 @@ public class Cache {
                                         JSONArray reports = response.getJSONArray("reportList");
                                         JSONArray attachments = response.getJSONArray("attachmentList");
                                         JSONArray misconducts = response.getJSONArray("misconductList");
-                                        db = new SQLiteHelper(context);
-                                        InsertSQLiteAsync insertSQLiteAsync = new InsertSQLiteAsync(context);
-                                        insertSQLiteAsync.execute(users, students, reports, attachments, misconducts);
+                                        GetDataAsync getDataAsync = new GetDataAsync(context);
+                                        getDataAsync.execute(users, students, reports, attachments, misconducts);
                                     }
                                 } catch (JSONException e) {
                                     System.out.println(e);
@@ -349,6 +345,12 @@ public class Cache {
         }
     }
 
+    public boolean clearTable(){
+        db = new SQLiteHelper(context);
+        db.emptyTables();
+        return true;
+    }
+
     public ArrayList<Report> getReport(){
         db = new SQLiteHelper(context);
         return db.getReport();
@@ -356,7 +358,7 @@ public class Cache {
 
     public boolean removeAllReportCache(){
 
-        if (removeStudentInfoCache() && removeExamInfoCache() && removeEvidenceDetailsCache() && removeSubReportDetailsCache() && removeApprovalDetailsCache()){
+        if (removeStudentInfoCache() && removeExamInfoCache() && removeEvidenceDetailsCache() && removeSubReportDetailsCache() && removeApprovalDetailsCache() && removeChiefInvDetailsCache()){
 
             return true;
         }
@@ -365,5 +367,13 @@ public class Cache {
         }
     }
 
-
+    public boolean removeAllData(){
+        if (removeAllReportCache() && removeUserPrefCache()){
+//            clearTable();
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }

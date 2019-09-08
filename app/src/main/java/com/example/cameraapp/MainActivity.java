@@ -11,10 +11,8 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.provider.MediaStore;
 import android.support.constraint.Constraints;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -44,16 +42,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.cameraapp.config.Cache;
 import com.example.cameraapp.config.ConnectionCheck;
 import com.example.cameraapp.config.DataSource;
-import com.example.cameraapp.config.SQLiteHelper;
 import com.example.cameraapp.fragments.LoginFragment;
 import com.example.cameraapp.fragments.MainFragment;
-import com.example.cameraapp.fragments.ReportStatusFragment;
 import com.example.cameraapp.fragments.Step1Fragment;
 import com.example.cameraapp.miscellanous.CustomUploadingBar;
 import com.example.cameraapp.miscellanous.UploadService;
-import com.example.cameraapp.models.Student;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -70,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private DataSource dataSource = new DataSource();
     private String reportId;
-    private SQLiteHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         textReportId = dialog.findViewById(R.id.text_report_id);
         textReview = dialog.findViewById(R.id.text_review);
         textReportId.setText("Report #" + reportId);
-        textReview.setOnClickListener(review);
+        textReview.setOnClickListener(ok);
         dialog.show();
 
         if(ActivityCompat.checkSelfPermission(this,
@@ -188,8 +181,12 @@ public class MainActivity extends AppCompatActivity {
                         "The Counselor from IUKL Counselory Department immediately for more details about this message.";
 
                 SmsManager smsManager = SmsManager.getDefault();
-                ArrayList<String> messageParts = smsManager.divideMessage(message);
-                        smsManager.sendMultipartTextMessage(phoneNum, null, messageParts, null, null);
+
+                if (smsManager != null){
+                    ArrayList<String> messageParts = smsManager.divideMessage(message);
+                    smsManager.sendMultipartTextMessage(phoneNum, null, messageParts, null, null);
+                }
+
                 Toast.makeText(this, "Student has been notified." , Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -270,17 +267,15 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener review = new View.OnClickListener() {
+    private View.OnClickListener ok = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dialog.dismiss();
-            Bundle data = new Bundle();
-            data.putString("report", reportId);
-            ReportStatusFragment reportStatusFragment = new ReportStatusFragment();
-            reportStatusFragment.setArguments(data);
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                    .replace(R.id.container, reportStatusFragment).addToBackStack(null).commit();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
+            ft.detach(fragment);
+            ft.attach(fragment);
+            ft.commit();
         }
     };
 
@@ -354,6 +349,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cache.getData();
     }
 }
