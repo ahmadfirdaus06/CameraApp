@@ -212,6 +212,7 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
 
             }
         });
+        listReport.setAdapter(adapter);
         updateUI();
     }
 
@@ -219,7 +220,6 @@ public class MainFragment extends Fragment implements LogAccessRequestAsync.Asyn
         if (adapter != null && adapter.getItemCount() > 0){
             textNoReport.setVisibility(View.INVISIBLE);
             listReport.setVisibility(View.VISIBLE);
-            listReport.setAdapter(adapter);
         }
         else{
             textNoReport.setVisibility(View.VISIBLE);

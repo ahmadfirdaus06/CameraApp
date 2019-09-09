@@ -319,12 +319,12 @@ public class Step4Fragment extends Fragment {
 
     public void setSaved(){
         String cb1 = checkBox1.getText().toString();
-        String cb2 = checkBox1.getText().toString();
-        String cb3 = checkBox1.getText().toString();
-        String cb4 = checkBox1.getText().toString();
-        String cb5 = checkBox1.getText().toString();
-        String cb6 = checkBox1.getText().toString();
-        String cb7 = checkBox1.getText().toString();
+        String cb2 = checkBox2.getText().toString();
+        String cb3 = checkBox3.getText().toString();
+        String cb4 = checkBox4.getText().toString();
+        String cb5 = checkBox5.getText().toString();
+        String cb6 = checkBox6.getText().toString();
+        String cb7 = checkBox7.getText().toString();
         String cb8 = inputOtherMisconduct.getText().toString().trim();
 
         if (checkBox1.isChecked()){
