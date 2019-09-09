@@ -1,4 +1,4 @@
-package com.ahmad.cameraapp.miscellanous;
+package com.ahmad.cameraapp.service;
 
 import android.content.Context;
 import android.os.AsyncTask;

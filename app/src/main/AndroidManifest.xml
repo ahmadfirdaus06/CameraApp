@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="true">
         <service
-            android:name="com.ahmad.cameraapp.miscellanous.UploadService"
+            android:name="com.ahmad.cameraapp.service.UploadService"
             android:enabled="true"
             android:exported="true">
         </service>

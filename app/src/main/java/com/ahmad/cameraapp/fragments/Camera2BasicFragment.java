@@ -61,8 +61,8 @@ import android.widget.Toast;
 
 import com.ahmad.cameraapp.R;
 import com.ahmad.cameraapp.config.Cache;
-import com.ahmad.cameraapp.miscellanous.AutoFitTextureView;
 import com.ahmad.cameraapp.models.Evidence;
+import com.ahmad.cameraapp.ui.AutoFitTextureView;
 
 import java.io.File;
 import java.io.FileOutputStream;

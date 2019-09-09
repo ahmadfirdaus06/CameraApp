@@ -1,4 +1,4 @@
-package com.ahmad.cameraapp.miscellanous;
+package com.ahmad.cameraapp.service;
 
 import android.app.NotificationManager;
 import android.content.Context;

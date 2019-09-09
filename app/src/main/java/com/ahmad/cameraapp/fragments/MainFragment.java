@@ -25,20 +25,20 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ahmad.cameraapp.R;
+import com.ahmad.cameraapp.adapters.ReportAdapter;
+import com.ahmad.cameraapp.config.Cache;
+import com.ahmad.cameraapp.config.ConnectionCheck;
+import com.ahmad.cameraapp.config.DataSource;
+import com.ahmad.cameraapp.models.Report;
+import com.ahmad.cameraapp.service.GetDataAsync;
+import com.ahmad.cameraapp.service.LogAccessRequestAsync;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.ahmad.cameraapp.R;
-import com.ahmad.cameraapp.config.Cache;
-import com.ahmad.cameraapp.config.ConnectionCheck;
-import com.ahmad.cameraapp.config.DataSource;
-import com.ahmad.cameraapp.miscellanous.GetDataAsync;
-import com.ahmad.cameraapp.miscellanous.LogAccessRequestAsync;
-import com.ahmad.cameraapp.adapters.ReportAdapter;
-import com.ahmad.cameraapp.models.Report;
 
 import org.json.JSONArray;
 import org.json.JSONException;

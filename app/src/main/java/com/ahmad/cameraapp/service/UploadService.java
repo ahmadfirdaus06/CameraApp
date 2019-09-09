@@ -1,4 +1,4 @@
-package com.ahmad.cameraapp.miscellanous;
+package com.ahmad.cameraapp.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,12 +16,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.ahmad.cameraapp.MainActivity;
 import com.ahmad.cameraapp.R;
 import com.ahmad.cameraapp.config.Cache;
@@ -31,6 +25,12 @@ import com.ahmad.cameraapp.models.Exam;
 import com.ahmad.cameraapp.models.Report;
 import com.ahmad.cameraapp.models.Student;
 import com.ahmad.cameraapp.models.SubReport;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;

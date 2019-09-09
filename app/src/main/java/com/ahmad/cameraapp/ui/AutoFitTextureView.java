@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ahmad.cameraapp.miscellanous;
+package com.ahmad.cameraapp.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;

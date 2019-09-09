@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.ahmad.cameraapp.R;
 import com.ahmad.cameraapp.config.Cache;
 import com.ahmad.cameraapp.config.ConnectionCheck;
-import com.ahmad.cameraapp.miscellanous.LogAccessRequestAsync;
+import com.ahmad.cameraapp.service.LogAccessRequestAsync;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,7 +85,7 @@ public class LoginFragment extends Fragment implements LogAccessRequestAsync.Asy
         window = getActivity().getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(getActivity(),R.color.blue));
+        window.setStatusBarColor(ContextCompat.getColor(getActivity(),R.color.toolbar_color));
         progressBar.setVisibility(View.INVISIBLE);
         buttonLogin.setOnClickListener(login);
     }

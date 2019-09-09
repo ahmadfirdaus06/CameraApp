@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.ahmad.cameraapp.R;
+import com.bumptech.glide.Glide;
 
 public class EnlargeImageFragment extends Fragment {
 

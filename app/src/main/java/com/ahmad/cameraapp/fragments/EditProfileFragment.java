@@ -17,17 +17,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ahmad.cameraapp.R;
+import com.ahmad.cameraapp.config.Cache;
+import com.ahmad.cameraapp.config.ConnectionCheck;
+import com.ahmad.cameraapp.config.DataSource;
+import com.ahmad.cameraapp.models.User;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.ahmad.cameraapp.R;
-import com.ahmad.cameraapp.config.Cache;
-import com.ahmad.cameraapp.config.ConnectionCheck;
-import com.ahmad.cameraapp.config.DataSource;
-import com.ahmad.cameraapp.models.User;
 import com.google.gson.Gson;
 
 import org.json.JSONException;

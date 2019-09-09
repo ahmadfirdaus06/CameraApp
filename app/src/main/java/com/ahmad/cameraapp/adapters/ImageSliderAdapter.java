@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.ahmad.cameraapp.R;
 import com.ahmad.cameraapp.config.DataSource;
 import com.ahmad.cameraapp.fragments.EnlargeImageFragment;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;

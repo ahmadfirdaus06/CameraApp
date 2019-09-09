@@ -1,4 +1,4 @@
-package com.ahmad.cameraapp.miscellanous;
+package com.ahmad.cameraapp.lib;
 
 import android.content.Context;
 

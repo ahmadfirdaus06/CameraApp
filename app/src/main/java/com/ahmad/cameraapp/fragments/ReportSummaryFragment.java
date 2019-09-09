@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.ahmad.cameraapp.R;
 import com.ahmad.cameraapp.adapters.ImageSliderAdapter;
-import com.ahmad.cameraapp.miscellanous.GetReportSummaryAsync;
+import com.ahmad.cameraapp.service.GetReportSummaryAsync;
 
 import org.json.JSONArray;
 import org.json.JSONException;

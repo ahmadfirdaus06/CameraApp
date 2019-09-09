@@ -33,20 +33,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.ahmad.cameraapp.config.Cache;
 import com.ahmad.cameraapp.config.ConnectionCheck;
 import com.ahmad.cameraapp.config.DataSource;
 import com.ahmad.cameraapp.fragments.LoginFragment;
 import com.ahmad.cameraapp.fragments.MainFragment;
 import com.ahmad.cameraapp.fragments.Step1Fragment;
-import com.ahmad.cameraapp.miscellanous.CustomUploadingBar;
-import com.ahmad.cameraapp.miscellanous.UploadService;
+import com.ahmad.cameraapp.service.UploadService;
+import com.ahmad.cameraapp.ui.CustomUploadingBar;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 

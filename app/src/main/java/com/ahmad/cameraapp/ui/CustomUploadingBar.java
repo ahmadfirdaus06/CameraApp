@@ -1,4 +1,4 @@
-package com.ahmad.cameraapp.miscellanous;
+package com.ahmad.cameraapp.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
