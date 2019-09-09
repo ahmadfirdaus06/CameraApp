@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.cameraapp">
+    package="com.ahmad.cameraapp">
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -23,11 +23,11 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="true">
         <service
-            android:name=".miscellanous.UploadService"
+            android:name="com.ahmad.cameraapp.miscellanous.UploadService"
             android:enabled="true"
             android:exported="true">
         </service>
-        <activity android:name=".MainActivity"
+        <activity android:name="com.ahmad.cameraapp.MainActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>

@@ -450,6 +450,7 @@
                             android:hint="Name"
                             android:maxLines="1"
                             android:padding="10dp"
+                            android:inputType="textCapWords"
                             android:textColorHighlight="@android:color/darker_gray"
                             android:textCursorDrawable="@null" />
 
@@ -489,7 +490,7 @@
                             android:padding="10dp"
                             android:textColorHighlight="@android:color/darker_gray"
                             android:textCursorDrawable="@null"
-                            android:inputType="text"/>
+                            android:inputType="textEmailAddress"/>
 
                     </LinearLayout>
 
@@ -567,6 +568,7 @@
                             android:background="@drawable/blue_input_field"
                             android:focusable="true"
                             android:hint="Name"
+                            android:inputType="textCapWords"
                             android:maxLines="1"
                             android:padding="10dp"
                             android:textColorHighlight="@android:color/darker_gray"
@@ -608,7 +610,7 @@
                             android:padding="10dp"
                             android:textColorHighlight="@android:color/darker_gray"
                             android:textCursorDrawable="@null"
-                            android:inputType="text"/>
+                            android:inputType="textEmailAddress"/>
 
                     </LinearLayout>
 
