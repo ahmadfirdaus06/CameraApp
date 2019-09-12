@@ -325,11 +325,7 @@ public class Step5Fragment extends Fragment {
     private View.OnClickListener back = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentByTag("step5Fragment");
-            getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right).remove(currentFragment).commit();
-            if (currentFragment == null){
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
+            getActivity().getSupportFragmentManager().popBackStack();
         }
     };
 
